@@ -1,0 +1,13 @@
+.reloj{
+    font-size: 140%;
+    font-family: 'Orbitron', sans-serif;
+    color: #363431;
+    display: inline-block;
+    #float: left;
+    #margin-top: 50%;
+}
+.cronometro{
+  background-color: lightgreen;
+  text-align: center;
+  border: 3px solid green;
+}

@@ -1,0 +1,158 @@
+<!doctype html>
+<html class="no-js" lang="pt-br">
+
+<head>
+  <meta charset="utf-8">
+  <title>ENEM __ANO__ - Interativo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../css/normalize.css">
+  <link rel="stylesheet" href="../css/main.css">
+
+  <meta name="theme-color" content="#fafafa">
+  <style>
+    body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin: 0; background-color: #f9f9f9; }
+    
+    #header {
+      background-color: #556B2F; /* DarkSeaGreen Escuro */
+      color: white;
+      text-align: center;
+      padding: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    #header h1 { margin: 0; font-weight: 600; letter-spacing: 1px; }
+
+    #container {
+        display: flex;
+        flex-wrap: wrap;
+        max-width: 1400px;
+        margin: 0 auto;
+        background: white;
+        min-height: calc(100vh - 150px);
+        box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    }
+
+    #nav {
+      flex: 0 0 220px; /* Largura fixa */
+      background-color: #f4f4f4;
+      padding: 20px;
+      border-right: 1px solid #e0e0e0;
+      text-align: left;
+    }
+
+    #nav h3 {
+        margin-top: 0;
+        font-size: 0.9em;
+        color: #556B2F;
+        text-transform: uppercase;
+        border-bottom: 2px solid #8FBC8F;
+        padding-bottom: 5px;
+        margin-bottom: 15px;
+    }
+
+    #nav a {
+        text-decoration: none;
+        color: #444;
+        font-size: 1em;
+        display: block;
+        padding: 10px 15px;
+        margin-bottom: 8px;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        transition: all 0.2s;
+        font-weight: 500;
+    }
+    #nav a:hover { 
+        background-color: #8FBC8F; 
+        color: white; 
+        border-color: #8FBC8F;
+        transform: translateX(3px);
+    }
+    #nav a.active { 
+        background-color: #556B2F; 
+        color: white; 
+        font-weight: bold; 
+        border-color: #556B2F;
+    }
+
+    /* Estilo Especial para o botão Voltar */
+    #nav a.nav-back {
+        background-color: #666;
+        color: white;
+        margin-bottom: 20px;
+        text-align: center;
+        border: none;
+    }
+    #nav a.nav-back:hover {
+        background-color: #444;
+        transform: translateY(-2px);
+    }
+
+    #section {
+      flex: 1;
+      padding: 30px 40px;
+    }
+
+    h2 { color: #556B2F; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+
+    .lista-provas ul { list-style: none; padding: 0; }
+    .lista-provas li {
+        margin-bottom: 12px;
+        padding: 15px 20px;
+        background: #fff;
+        border: 1px solid #eee;
+        border-left: 5px solid #8FBC8F;
+        border-radius: 4px;
+        transition: box-shadow 0.2s;
+    }
+    .lista-provas li:hover {
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .lista-provas a { 
+        text-decoration: none; 
+        font-weight: 600; 
+        font-size: 1.1em; 
+        color: #333; 
+        display: block; 
+    }
+    .lista-provas a:hover { color: #556B2F; }
+
+    #footer {
+      background-color: #8FBC8F;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      margin-top: auto;
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="header">
+  <h1>ENEM Interativo</h1>
+  <p>Provas do Ano: <strong>__ANO__</strong></p>
+</div>
+
+<div id="container">
+    <div id="nav">
+      __MENU__
+    </div>
+
+    <div id="section">
+      <h2>Cadernos de Prova Disponíveis</h2>
+      <p>Selecione um caderno abaixo para iniciar a resolução:</p>
+      
+      __ARQUIVOS__
+
+      <hr style="margin-top: 30px; border:0; border-top:1px solid #eee;">
+      <p style="color: #777; font-size: 0.9em;">Total de arquivos: __QTD__</p>
+    </div>
+</div>
+
+<div id="footer">
+  <p>Copyright © 2025 - UFABC</p>
+</div>
+
+</body>
+</html>
