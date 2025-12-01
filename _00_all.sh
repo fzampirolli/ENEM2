@@ -164,11 +164,11 @@ python3 _03_enem2matriz.py "$ANO" "$AMOSTRA"
 
 log_info "Calculando parâmetros TRI (Modelo 3PL)..."
 # muito lento para grandes amostras
-#python3 _04_matriz2TRI.py "$ANO"
+python3 _04_matriz2TRI.py "$ANO"
 
 log_info "Gerando gráficos (CCI e Boxplot)..."
 # muito lento para grandes amostras
-#python3 _05_matriz2graficos.py "$ANO"
+python3 _05_matriz2graficos.py "$ANO"
 
 log_success "Análises concluídas"
 
