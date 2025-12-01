@@ -288,14 +288,17 @@ def draw_signoits(output_folder, filename_base, mat, mat_raw):
         nome_arquivo = os.path.basename(filename_base)
         partes = nome_arquivo.split('_')
         codigo = partes[0]
-        tam = partes[1]
+        # partes[1] é '100'
+        tam_bruto = partes[1] 
+        # --- CORREÇÃO: Padronizar TAM para 6 dígitos (000100) ---
+        tam = tam_bruto.zfill(6)
     except IndexError:
         codigo = "UNK"
-        tam = "0"
+        tam = "000000"
 
     # Verifica se o número de amostras é menor que 1000
-    if int(tam) < 1000:
-        print(f"⚠️  Amostra insuficiente ({tam} < 1000). Pulando gráficos para {codigo}.")
+    if int(tam) < 100:
+        print(f"⚠️  Amostra insuficiente ({tam} < 100). Pulando gráficos para {codigo}.")
         return
 
     print(f"   -> Gerando gráficos para prova {codigo} ({mat.shape[0]} itens)...")

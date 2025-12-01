@@ -31,13 +31,15 @@ python3 _00_setup_validator.py
 
 Se aparecer `✅ VALIDAÇÃO COMPLETA - Sistema pronto para uso!`, você está pronto! 🎉
 
-### 3️⃣ Processar Primeiro Ano
+### 3️⃣ Processar um Ano
 
 ```bash
-# Exemplo: ENEM 2020 (modo rápido para teste)
-./_00_all.sh 2020 500 1
+# Exemplo: ENEM 2020, usando 100 amostras e mantendo apenas 1 PDF por dia
+# ATENÇÃO: todos os PDFs em ./2020/PROVAS... serão removidos, exceto 2
+./_00_all.sh 2020 100 1
 
-# Modo completo (recomendado para produção)
+# Modo completo (recomendado para produção):
+# 2000 amostras e até 2 PDFs por dia
 ./_00_all.sh 2020 2000 2
 ```
 
@@ -67,10 +69,10 @@ python -m http.server 8000
 
 | Cenário | Comando | Tempo Aprox. |
 |---------|---------|--------------|
-| **Teste Rápido** | `./_00_all.sh 2020 100 1` | ~5 min |
-| **Desenvolvimento** | `./_00_all.sh 2020 500 1` | ~10 min |
-| **Produção** | `./_00_all.sh 2020 2000 2` | ~30 min |
-| **Análise Completa** | `./_00_all.sh 2020 5000 4` | ~60 min |
+| **Teste Rápido** | `./_00_all.sh 2020 100 1` | ~30 min |
+| **Desenvolvimento** | `./_00_all.sh 2020 500 1` | ~50 min |
+| **Produção** | `./_00_all.sh 2020 2000 2` | ~120 min |
+| **Análise Completa** | `./_00_all.sh 2020 5000 4` | ~150 min |
 
 ---
 
@@ -131,27 +133,27 @@ brew install poppler imagemagick
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│ 1. Download dos Microdados (INEP)                       │
+│ 1. Download dos Microdados (INEP)                        │
 └────────────────────┬─────────────────────────────────────┘
                      │
 ┌────────────────────▼─────────────────────────────────────┐
-│ 2. Seleção de Provas (Top N por amostra)                │
+│ 2. Seleção de Provas (Top N por amostra)                 │
 └────────────────────┬─────────────────────────────────────┘
                      │
 ┌────────────────────▼─────────────────────────────────────┐
-│ 3. Geração de Mapas e Metadados (R→JSON, CSV→JSON)      │
+│ 3. Geração de Mapas e Metadados (R→JSON, CSV→JSON)       │
 └────────────────────┬─────────────────────────────────────┘
                      │
 ┌────────────────────▼─────────────────────────────────────┐
-│ 4. Análise Estatística (TRI, Matrizes, Gráficos)        │
+│ 4. Análise Estatística (TRI, Matrizes, Gráficos)         │
 └────────────────────┬─────────────────────────────────────┘
                      │
 ┌────────────────────▼─────────────────────────────────────┐
-│ 5. Processamento de PDFs (PDF→PNG→HTML)                 │
+│ 5. Processamento de PDFs (PDF→PNG→HTML)                  │
 └────────────────────┬─────────────────────────────────────┘
                      │
 ┌────────────────────▼─────────────────────────────────────┐
-│ 6. Geração de Índices (HTML navegável)                  │
+│ 6. Geração de Índices (HTML navegável)                   │
 └──────────────────────────────────────────────────────────┘
 ```
 
@@ -275,6 +277,7 @@ ENEM/
 ├── index.html                  ✅ Página principal do projeto
 └── 2020/
     ├── index.html                  ✅ Página principal do ano
+    ├── FIGS/                       ✅ Gráficos CCI e BoxPlot
     ├── DADOS/
     │   ├── mapa_provas.json        ✅ Mapeamento de códigos
     │   ├── ITENS_PROVA_2020.json   ✅ Metadados dos itens

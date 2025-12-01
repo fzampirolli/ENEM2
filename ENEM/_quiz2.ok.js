@@ -270,9 +270,9 @@ function checkStatistcs(type) {
         var linkTRI = "-";
         var linkBOX = "-";
         if (item.data.images && item.data.images.length >= 2) {
-            var triImg = item.data.images[0].replace(/_0+(\d{4,})_/, "_$1_");
-            var boxImg = item.data.images[1].replace(/_0+(\d{4,})_/, "_$1_");
-            
+            var triImg = item.data.images[0];
+            var boxImg = item.data.images[1];
+
             linkTRI = '<a href="../FIGS/' + triImg + '" target="_blank">Ver</a>';
             linkBOX = '<a href="../FIGS/' + boxImg + '" target="_blank">Ver</a>';
         }

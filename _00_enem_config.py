@@ -84,8 +84,15 @@ class ENEMConfig:
     @classmethod
     def salvar_config(cls, filepath: str = 'enem_config.json'):
         """Salva configuração em arquivo JSON"""
+        # Ordena as URLs em ordem decrescente
+        urls_ordenadas = dict(sorted(
+            cls.URLS_CONHECIDAS.items(),
+            key=lambda x: x[0],
+            reverse=True
+        ))
+        
         config = {
-            'urls': cls.URLS_CONHECIDAS,
+            'urls': urls_ordenadas,
             'url_patterns': cls.URL_PATTERNS,
             'defaults': cls.DEFAULTS,
             'estrutura_pastas': cls.ESTRUTURA_PASTAS,
