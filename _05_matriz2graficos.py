@@ -361,8 +361,8 @@ def genStatistics(ano):
         n_amostras_real = mat_respostas.shape[0]
         
         # Verifica se deve pular com base no número real de linhas
-        if n_amostras_real < 1000:
-            print(f"⚠️  Matriz com {n_amostras_real} linhas (< 1000). Pulando geração de gráficos.")
+        if n_amostras_real < 100:
+            print(f"⚠️  Matriz com {n_amostras_real} linhas (< 100). Pulando geração de gráficos.")
             continue
 
         v_mean = np.mean(mat_respostas, axis=0)
