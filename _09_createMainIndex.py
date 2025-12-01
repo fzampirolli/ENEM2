@@ -202,7 +202,7 @@ def criar_index(anos, menu_html):
 
 <div id="header">
   <h1>ENEM Interativo</h1>
-  <p>Portal de Microdados e Provas Interativas</p>
+  <p>Portal de Provas Interativas do ENEM</p>
 </div>
 
 <div class="main-container">

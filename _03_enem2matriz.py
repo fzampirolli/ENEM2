@@ -17,7 +17,7 @@ def carregar_json_itens(ano):
 def get_microdados_path(ano):
     possibilidades = [
         f"{ano}/DADOS/MICRODADOS_ENEM_{ano}.csv",
-        f"MICRODADOS_ENEM_{ano}.csv"
+        f"{ano}/DADOS/RESULTADOS_{ano}.csv",
     ]
     for p in possibilidades:
         if os.path.exists(p): return p
