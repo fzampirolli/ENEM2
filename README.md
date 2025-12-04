@@ -279,7 +279,10 @@ GNU Affero General Public License (AGPL-3.0)
 ## 👤 Autores
 
 Francisco de Assis Zampirolli - UFABC
-Irineu Antunes Jr. - UFABC
+
+## 🙌 Agradecimentos
+
+Agradecemos especialmente ao professor Irineu Antunes Jr., cuja parceria, incentivo e discussões construtivas contribuíram significativamente para a evolução desta versão automatizada do projeto.
 
 ---
 
