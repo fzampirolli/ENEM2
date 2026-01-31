@@ -1,0 +1,41 @@
+{
+  "urls": {
+    "2024": "https://download.inep.gov.br/microdados/microdados_enem_2024.zip",
+    "2023": "https://download.inep.gov.br/microdados/microdados_enem_2023.zip",
+    "2022": "https://download.inep.gov.br/microdados/microdados_enem_2022.zip",
+    "2021": "https://download.inep.gov.br/microdados/microdados_enem_2021.zip",
+    "2020": "https://download.inep.gov.br/microdados/microdados_enem_2020.zip",
+    "2019": "https://download.inep.gov.br/microdados/microdados_enem_2019.zip",
+    "2018": "https://download.inep.gov.br/microdados/microdados_enem_2018.zip",
+    "2017": "https://download.inep.gov.br/microdados/microdados_enem_2017.zip",
+    "2016": "https://download.inep.gov.br/microdados/microdados_enem_2016.zip",
+    "2015": "https://download.inep.gov.br/microdados/microdados_enem_2015.zip",
+    "2014": "https://download.inep.gov.br/microdados/microdados_enem_2014.zip",
+    "2013": "https://download.inep.gov.br/microdados/microdados_enem_2013.zip",
+    "2012": "https://download.inep.gov.br/microdados/microdados_enem_2012.zip",
+    "2011": "https://download.inep.gov.br/microdados/microdados_enem_2011.zip",
+    "2010": "https://download.inep.gov.br/microdados/microdados_enem_2010.zip",
+    "2009": "https://download.inep.gov.br/microdados/microdados_enem_2009.zip"
+  },
+  "url_patterns": [
+    "https://download.inep.gov.br/microdados/microdados_enem_{ano}.zip",
+    "https://download.inep.gov.br/microdados/microdados_enem{ano}.zip"
+  ],
+  "defaults": {
+    "amostra_padrao": 2000,
+    "top_provas_padrao": 2,
+    "limite_pdfs_padrao": 2,
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
+  },
+  "estrutura_pastas": {
+    "root": "{ano}",
+    "inputs": "{ano}/INPUTS",
+    "dados": "{ano}/DADOS",
+    "provas": "{ano}/PROVAS E GABARITOS",
+    "output_root": "ENEM/{ano}",
+    "output_dados": "ENEM/{ano}/DADOS",
+    "output_provas": "ENEM/{ano}/PROVAS_E_GABARITOS",
+    "output_imagens": "ENEM/{ano}/PROVAS_E_GABARITOS/imagens"
+  },
+  "ultima_atualizacao": "2026-01-31T14:58:57.879690"
+}

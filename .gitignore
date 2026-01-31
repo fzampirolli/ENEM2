@@ -1,0 +1,49 @@
+# Ambiente virtual
+.venv/
+.vscode/
+venv/
+ENV/
+env/
+
+# Pastas de dados
+2019/
+2020/
+2021/
+2022/
+2023/
+2024/
+ENEM/2019/
+ENEM/2020/
+ENEM/2021/
+ENEM/2022/
+ENEM/2023/
+ENEM/2024/
+
+
+# Cache do Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.zip
+
+# Logs
+*.log
+
+# Arquivos temporários
+*.tmp
+*.temp
+
+# Jupyter
+.ipynb_checkpoints/
+
+# VSCode
+.vscode/
+
+# macOS
+.DS_Store
+
+# Arquivos gerados
+#*.html
+#*.png
+#*.pdf
