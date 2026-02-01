@@ -34,44 +34,55 @@ function initApp() {
 }
 
 
+var globalData = {};
+var globalMapa = {}; // Novo: armazena o mapa oficial
+var activeExams = [];
+
 function loadJSON(year) {
-    var url = "../DADOS/ITENS_PROVA_" + year + ".json";
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', url, true);
-    xhr.responseType = 'json';
-    xhr.onload = function() {
-        if (xhr.status === 200) {
-            globalData = xhr.response;
-            if (globalData) filterActiveExams();
-        }
-    };
-    xhr.send();
+    // Carrega o mapa_provas.json PRIMEIRO
+    fetch("../DADOS/mapa_provas.json")
+        .then(response => response.json())
+        .then(mapa => {
+            globalMapa = mapa;
+            // Só depois carrega os itens
+            return fetch("../DADOS/ITENS_PROVA_" + year + ".json");
+        })
+        .then(response => response.json())
+        .then(itens => {
+            globalData = itens;
+            filterActiveExams();
+        })
+        .catch(err => console.error("❌ Erro ao carregar JSONs:", err));
 }
 
 function filterActiveExams() {
     activeExams = [];
-    var targetAreas = (currentDay === "1") ? ["LC", "CH"] : ["CN", "MT"];
-    var addedAreas = new Set();
+    
+    // Pegamos apenas os IDs que VOCÊ definiu como corretos no mapa_provas.json
+    var idsNoMapa = Object.keys(globalMapa);
 
-    for (var code in globalData) {
-        if (globalData.hasOwnProperty(code)) {
-            var exam = globalData[code];
+    for (var i = 0; i < idsNoMapa.length; i++) {
+        var id = idsNoMapa[i];
+        var exam = globalData[id];
+
+        if (exam) {
+            // Normalização de cor (Branco/Branca)
             var jsonColor = (exam.COR || "").toUpperCase();
-            var bodyColor = currentColor.toUpperCase();
-            
             if (jsonColor === "BRANCA") jsonColor = "BRANCO";
             if (jsonColor === "AMARELA") jsonColor = "AMARELO";
+
+            var bodyColor = currentColor.toUpperCase();
             if (bodyColor === "BRANCA") bodyColor = "BRANCO";
             if (bodyColor === "AMARELA") bodyColor = "AMARELO";
 
-            if (jsonColor === bodyColor && targetAreas.indexOf(exam.AREA) !== -1) {
-                if (!addedAreas.has(exam.AREA)) {
-                    activeExams.push({ id: code, area: exam.AREA, data: exam });
-                    addedAreas.add(exam.AREA);
-                }
+            // Só aceita se a cor bater E o dia bater
+            // Isso ignora o ID 1355 porque ele não está no globalMapa
+            if (jsonColor === bodyColor && exam.DIA === currentDay) {
+                activeExams.push({ id: id, area: exam.AREA, data: exam });
             }
         }
     }
+    console.log("✅ Provas Ativas (Filtradas pelo Mapa):", activeExams.map(e => e.id));
 }
 
 // --- Interação ---

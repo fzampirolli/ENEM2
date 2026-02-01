@@ -40,7 +40,7 @@ cat > "$HTML_FILE" <<EOF
 <title>ENEM $ANO - $ID_PROVA</title>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <link rel="stylesheet" href="../../_cronometro.css">
-<script src="../../_quiz2.ok.js"></script>
+<script src="../../_quiz2.ok.js?v=$(date +%s)"></script>
 <style>
     body { background-color: #808080; margin: 0; padding: 0; font-family: sans-serif; }
     #page-container { background-color: white; margin: 0 auto; padding: 0; max-width: 1000px; box-shadow: 0px 0px 15px rgba(0,0,0,0.5); min-height: 100vh; padding-bottom: 50px; }

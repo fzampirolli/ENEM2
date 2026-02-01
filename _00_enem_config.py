@@ -241,10 +241,12 @@ class ENEMValidator:
         
         print(f"\n📄 Validando arquivos para {ano}...")
         
-        # Microdados
+        # Microdados - Suporta o padrão legado e o novo padrão 2024+
         microdados_paths = [
             os.path.join(pastas['dados'], f'MICRODADOS_ENEM_{ano}.csv'),
             os.path.join(pastas['root'], 'DADOS', f'MICRODADOS_ENEM_{ano}.csv'),
+            os.path.join(pastas['dados'], f'RESULTADOS_{ano}.csv'),  # Novo padrão
+            os.path.join(pastas['root'], 'DADOS', f'RESULTADOS_{ano}.csv') # Novo padrão (raiz)
         ]
         resultados['microdados'] = any(os.path.exists(p) for p in microdados_paths)
         
