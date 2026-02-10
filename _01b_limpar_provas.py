@@ -24,8 +24,9 @@ def limpar_provas(ano, top_n):
     
     for dia in ["1", "2"]:
         # Filtra cadernos do dia e remove duplicatas de PDF (pois LC/CH ou CN/MT compartilham o mesmo PDF)
-        cadernos_dia = [item for item in ranking if item['dia'] == dia]
-        
+        #cadernos_dia = [item for item in ranking if item['dia'] == dia]
+        cadernos_dia = [item for item in ranking if str(item.get('dia')) == str(dia)]
+
         # Como o ranking já vem ordenado por total_alunos, pegamos os PDFs únicos dos primeiros registros
         vistos = set()
         pdfs_do_dia = []

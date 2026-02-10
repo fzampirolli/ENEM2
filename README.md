@@ -374,6 +374,7 @@ Ideal para testar o pipeline sem consumir muitos recursos:
 ./_00_all.sh 2020 100 1
 
 # Tempo estimado: ~30 minutos
+# Espaço em disco: ~5GB
 ```
 
 ### 📊 Cenário 2: Análise Padrão
@@ -381,12 +382,11 @@ Ideal para testar o pipeline sem consumir muitos recursos:
 Configuração recomendada para análises educacionais:
 
 ```bash
-# Amostra representativa, 2 pdfs por dia
+# Amostra representativa, provas principais
 ./_00_all.sh 2020 2000 2
 
-# Tempo estimado: ~1 hora
-# Espaço em disco1: ~250MB 
-# Espaço em disco2: ~8GB (backup, com zip)
+# Tempo estimado: ~2 horas
+# Espaço em disco: ~5GB
 ```
 
 ### 🎓 Cenário 3: Análise Completa (Pesquisa)
@@ -394,10 +394,23 @@ Configuração recomendada para análises educacionais:
 Para pesquisas acadêmicas com rigor estatístico:
 
 ```bash
-# Amostra grande, 6 pdf por dia
+# Amostra grande, todas as aplicações
 ./_00_all.sh 2020 10000 6
 
-# Tempo estimado: ~2 horas
+# Tempo estimado: ~6 horas
+# Espaço em disco: ~5GB
+```
+
+### 📈 Cenário 4: Produção (Análise Abrangente)
+
+Configuração balanceada para produção:
+
+```bash
+# Amostra representativa, provas principais
+./_00_all.sh 2020 5000 4
+
+# Tempo estimado: ~4 horas
+# Espaço em disco: ~5GB
 ```
 
 ---
@@ -604,8 +617,16 @@ done
 Ou, em uma única linha e considerando default para amostras e top: `2000 2`:
 
 ```bash
-for ano in {2019..2024}; do ./_00_all.sh $ano; done
+for ano in {2019..2024}; do ./_00_all.sh $ano 2000 4; done
 ```
+
+Ou,
+
+```bash
+nohup bash -c 'for ano in {2019..2024}; do ./_00_all.sh $ano 2000 4; done' &
+```
+
+Para verificar o processo de execução, digite `tail -f nohup.out`.
 
 ---
 
