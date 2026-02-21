@@ -149,7 +149,7 @@ log_info "Gerando mapa de provas (R → JSON): \npython3 _02a_gerar_mapa_provas.
 python3 _02a_gerar_mapa_provas.py "$ANO" "$TOP"
 
 log_info "Convertendo itens para JSON (CSV → JSON): \npython3 _02b_csv2json.py $ANO"
-python3 _02b_csv2json.py "$ANO"
+python3 _02b_csv2json.py "$ANO" "$TOP"
 
 log_info "Adicionando estrutura de imagens: \npython3 _02c_addJson.py $ANO $AMOSTRA"
 python3 _02c_addJson.py "$ANO" "$AMOSTRA"
@@ -213,8 +213,8 @@ for PDF_PATH in $(find "${DIR_ORIGEM}" -name "*.pdf" | sort); do
     ARQUIVO_HTML_FINAL="${DIR_DESTINO_PROVAS}/${ID_PROVA}_INTERATIVO.html"
 
     # Fatiamento (PDF → PNGs)
-    log_info "Convertendo PDF para imagens: \n./_06a_pdf2png.sh $PDF_PATH $DIR_IMAGENS_ESPECIFICO"
-    ./_06_processar_enem.sh "$PDF_PATH" "$DIR_IMAGENS_ESPECIFICO"
+    log_info "Convertendo PDF para imagens: \n./_06_processar_enem.sh \"$PDF_PATH\" \"$DIR_IMAGENS_ESPECIFICO\" \"$ANO\" \"$ID_PROVA\""
+    ./_06_processar_enem.sh "$PDF_PATH" "$DIR_IMAGENS_ESPECIFICO" "$ANO" "$ID_PROVA"
     
     # Montagem do HTML Interativo
     log_info "Gerando HTML interativo: \n./_07_montar_prova_interativa.sh $ANO $ID_PROVA $DIR_IMAGENS_ESPECIFICO $ARQUIVO_HTML_FINAL"

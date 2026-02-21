@@ -338,6 +338,16 @@ Cada dia tem múltiplas cores de caderno (ordem das questões varia):
 - 🟪 ROSA
 - 🟩 VERDE
 
+### Padrão utilizado nas numerações das questões
+
+| Bloco | Fatia |  Chave JSON |
+|---|---|---|
+| Inglês (D1) | q1–q5 |  `"1"`…`"5"` |
+| Espanhol (D1) | q01–q05 |  `"01"`…`"05"` |
+| LC (D1) | q06–q45 | `"06"`…`"45"` |
+| CH (D1) | q46–q90 | `"46"`…`"90"` |
+| CN+MT (D2) | q91–q180 |  `"91"`…`"180"` |
+
 ### 🔍 Exemplo Prático
 
 ```

@@ -1,5 +1,47 @@
+'''
+Filtrar apenas alunos que escolheram Inglês e gera a matriz de respostas 
+a partir do RESULTADOS_ano.csv (ou MICRODADOS_ENEM_ano.csv), 
+escolhendo apenas as provas TOP.
+
+A coluna chave no CSV de resultados é a TP_LINGUA, onde:
+
+0: Inglês
+
+1: Espanhol
+
+Padrão de nomenclatura de IDs de questões:
+  Bloco            q_id (chave JSON)      NNN no arquivo
+  ─────────────    ─────────────────      ───────────────
+  Inglês  (D1)     "1" … "5"             1 … 5
+  Espanhol (D1)    "01" … "05"           01 … 05
+  LC (D1)          "06" … "09"           06 … 09
+  LC (D1)          "10" … "50"           10 … 50
+  CH (D1)          "51" … "90"           51 … 90
+  CN+MT (D2)       "91" … "180"          91 … 180
+
+
+**TX_RESPOSTAS_LC - 45 chars:**
+as 5 primeiras posições correspondem à língua estrangeira escolhida pelo aluno.
+
+**TX_GABARITO_LC - 50 chars:**
+das 10 primeiras posições, as 5 primeiras são Inglês e as outras 5 são Espanhol.
+
+Então para um aluno de **Inglês (TP_LINGUA=0)**:
+
+GABARITO (50):  [IG1 IG2 IG3 IG4 IG5] [ES1 ES2 ES3 ES4 ES5] [LC06...LC50]
+                 pos 0-4                pos 5-9                pos 10-49
+
+RESPOSTA (45):  [LE1 LE2 LE3 LE4 LE5] [LC06...LC50]
+                 pos 0-4 (Inglês)       pos 5-44
+
+
+O casamento correto para aluno de Inglês seria:
+- Resposta[0:5] → Gabarito[0:5] (Inglês)
+- Resposta[5:45] → Gabarito[10:50] (LC comum)
+- Gabarito[5:10] (Espanhol) é **ignorado**
+'''
+
 import pandas as pd
-import numpy as np
 import sys
 import os
 import json
@@ -9,133 +51,148 @@ import warnings
 warnings.filterwarnings("ignore")
 
 def buscar_path_microdados(ano):
-    """Procura o ficheiro de dados usando os padrões antigo e novo"""
-    dados_dir = os.path.join(ano, "DADOS")
-    nomes_possiveis = [
-        f"MICRODADOS_ENEM_{ano}.csv",
-        f"RESULTADOS_{ano}.csv"
-    ]
-    
-    for nome in nomes_possiveis:
-        caminho = os.path.join(dados_dir, nome)
-        if os.path.exists(caminho):
-            return caminho
-    return None
+    """Garante a busca no caminho correto sem o prefixo ENEM"""
+    caminho = os.path.join(ano, "DADOS", f"RESULTADOS_{ano}.csv")
+    if not os.path.exists(caminho):
+        caminho = os.path.join(ano, "DADOS", f"MICRODADOS_ENEM_{ano}.csv")
+    return caminho if os.path.exists(caminho) else None
 
 def carregar_mapa_provas(ano):
-    """Carrega o mapa para saber quais IDs são o 'Top N'"""
     path = os.path.join("ENEM", ano, "DADOS", "mapa_provas.json")
     if os.path.exists(path):
         with open(path, 'r', encoding='utf-8') as f:
             return json.load(f)
     return {}
 
-def carregar_ranking(ano):
-    """Carrega o ranking para validar se os IDs existem e são voados."""
+def carregar_id_map(ano):
+    """Lê o ranking_provas para obter a área (sg_area) de cada CO_PROVA."""
     path = os.path.join("ENEM", ano, "DADOS", f"ranking_provas_{ano}.json")
-    if os.path.exists(path):
-        with open(path, 'r', encoding='utf-8') as f:
-            # Transforma em dicionário indexado pelo co_prova para busca rápida
-            return {str(item['co_prova']): item for item in json.load(f)}
-    return {}
+    if not os.path.exists(path):
+        return {}
+    with open(path, 'r', encoding='utf-8') as f:
+        ranking = json.load(f)
+    return {item['co_prova']: item for item in ranking}
 
-def processar_matriz(ano, amostra_alvo_str):
-    amostra_alvo = int(amostra_alvo_str)
-    amostra_formatada = str(amostra_alvo).zfill(6)
-    
-    print(f"--- Gerando Matrizes Top N para {ano} (Amostra: {amostra_formatada}) ---")
-    
-    # 1. Obter os IDs Alvo e Validar no Ranking
-    mapa = carregar_mapa_provas(ano)
-    ranking = carregar_ranking(ano)
-    
-    if not mapa:
-        print(f"❌ mapa_provas.json não encontrado. Rode a Etapa 02a primeiro.")
+def processar_matrizes(ano, amostra_alvo):
+    path_dados = buscar_path_microdados(ano)
+    mapa_top   = carregar_mapa_provas(ano)
+
+    if not path_dados:
+        print(f"❌ Erro: Microdados não encontrados em {ano}/DADOS/")
         return
-    
-    target_ids = set(mapa.keys())
-    print(f"🎯 IDs Selecionados via Mapa: {', '.join(sorted(target_ids))}")
-    
-    # Validação contra o Ranking
-    ids_validados = []
-    for pid in sorted(target_ids):
-        if pid in ranking:
-            info = ranking[pid]
-            print(f"   [VALIDADO] ID {pid}: {info.get('tx_cor','')} {info.get('sg_area','')} - {info.get('total_alunos',0)} alunos")
-            ids_validados.append(pid)
+    if not mapa_top:
+        print(f"❌ Erro: mapa_provas.json não encontrado em ENEM/{ano}/DADOS/")
+        return
+
+    # Carregar gabaritos
+    path_itens = os.path.join("ENEM", ano, "DADOS", f"ITENS_PROVA_{ano}.json")
+    if not os.path.exists(path_itens):
+        print(f"❌ Erro: {path_itens} não encontrado.")
+        return
+
+    with open(path_itens, 'r', encoding='utf-8') as f:
+        itens_data = json.load(f)
+
+    # --- IDs das provas TOP (somente os que existem no mapa) ---
+    ids_alvo = set(mapa_top.keys())
+
+    # Verificar cobertura: todo ID do mapa deve ter gabarito no JSON
+    fora_do_json = ids_alvo - set(itens_data.keys())
+    if fora_do_json:
+        print(f"❌ ERRO: IDs no mapa_provas sem gabarito em ITENS_PROVA: {fora_do_json}")
+        print(f"   Verifique se ITENS_PROVA_{ano}.json cobre as cores do mapa_provas.json")
+        return
+
+    # Mapear pid -> (col_prova, col_resp) usando a área vinda do ranking
+    id_map        = carregar_id_map(ano)
+    area_para_idx = {'CN': 0, 'CH': 1, 'LC': 2, 'MT': 3}
+    cols_provas   = ['CO_PROVA_CN', 'CO_PROVA_CH', 'CO_PROVA_LC', 'CO_PROVA_MT']
+    cols_resps    = ['TX_RESPOSTAS_CN', 'TX_RESPOSTAS_CH', 'TX_RESPOSTAS_LC', 'TX_RESPOSTAS_MT']
+
+    pid_para_colunas = {}
+    for pid in ids_alvo:
+        area = id_map.get(pid, {}).get('sg_area', '')
+        idx  = area_para_idx.get(area)
+        if idx is not None:
+            pid_para_colunas[pid] = (cols_provas[idx], cols_resps[idx])
         else:
-            print(f"   [AVISO] ID {pid} não encontrado no arquivo de ranking!")
-    
-    # 2. Carregar Gabaritos e Microdados
-    path_itens_csv = os.path.join(ano, "DADOS", f"ITENS_PROVA_{ano}.csv")
-    df_itens_all = pd.read_csv(path_itens_csv, sep=';', encoding='latin1')
+            print(f"⚠️  Prova {pid}: área '{area}' não reconhecida em ranking_provas_{ano}.json — pulando.")
 
-    # path_microdados = os.path.join(ano, "DADOS", f"MICRODADOS_ENEM_{ano}.csv")
-    # if not os.path.exists(path_microdados):
-    #     print(f"❌ Microdados não encontrados em: {path_microdados}")
-    #     return
-    
-    # 1. Localizar ficheiro de microdados
-    path_microdados = buscar_path_microdados(ano)
-    if not path_microdados:
-        print(f"❌ Erro: Microdados não encontrados para o ano {ano}.")
+    if not pid_para_colunas:
+        print(f"❌ Erro: Nenhum pid com área reconhecida. Verifique ranking_provas_{ano}.json.")
         return
 
-    print(f"--- Gerando Matrizes para {ano} (Ficheiro: {os.path.basename(path_microdados)}) ---")
+    amostras_coletadas = {pid: [] for pid in pid_para_colunas}
 
-    # 3. Preparar Coleta e Saída
-    dir_saida = os.path.join("ENEM", ano, "DADOS", "MATRIZ") # Salva direto na DADOS do ano
-    amostras_coletadas = {pid: [] for pid in ids_validados}
-    cols_leitura = ['CO_PROVA_CN', 'CO_PROVA_CH', 'CO_PROVA_LC', 'CO_PROVA_MT',
-                    'TX_RESPOSTAS_CN', 'TX_RESPOSTAS_CH', 'TX_RESPOSTAS_LC', 'TX_RESPOSTAS_MT']
+    print(f"🚀 Lendo: {path_dados}")
+    print(f"🚀 Coletando amostra de {amostra_alvo} alunos p/ cada prova TOP (Somente Inglês)...")
 
-    print(f"⏳ Lendo Microdados e filtrando alunos...")
-    chunks = pd.read_csv(path_microdados, sep=';', encoding='latin1', usecols=cols_leitura, chunksize=100000)
-    
-    for chunk in chunks:
-        if all(len(amostras_coletadas[pid]) >= amostra_alvo for pid in ids_validados):
+    # Chunking para performance
+    reader = pd.read_csv(path_dados, sep=';', encoding='latin1', chunksize=100000, low_memory=False)
+
+    for chunk in reader:
+        # FILTRO: Somente Inglês
+        if 'TP_LINGUA' in chunk.columns:
+            chunk = chunk[chunk['TP_LINGUA'] == 0]
+
+        if chunk.empty:
+            continue
+
+        # Cada pid sabe exatamente qual coluna usar — sem testar as 4 áreas
+        for pid, (cp, cr) in pid_para_colunas.items():
+            if len(amostras_coletadas[pid]) >= amostra_alvo:
+                continue
+
+            # Robustez: converte float -> int -> str para evitar "1395.0"
+            mask  = chunk[cp].fillna(-1).astype(int).astype(str) == pid
+            resps = chunk.loc[mask, cr].dropna().tolist()
+
+            vagas = amostra_alvo - len(amostras_coletadas[pid])
+            amostras_coletadas[pid].extend(resps[:vagas])
+
+        # Para se já atingiu a amostra em todas as provas
+        if all(len(amostras_coletadas[pid]) >= amostra_alvo for pid in pid_para_colunas):
             break
-            
-        for area in ['CN', 'CH', 'LC', 'MT']:
-            col_prova = f'CO_PROVA_{area}'
-            col_resp = f'TX_RESPOSTAS_{area}'
-            
-            chunk[col_prova] = pd.to_numeric(chunk[col_prova], errors='coerce').fillna(-1).astype(int).astype(str)
-            
-            for pid in ids_validados:
-                if len(amostras_coletadas[pid]) >= amostra_alvo: continue
-                
-                mask = chunk[col_prova] == pid
-                resps = chunk.loc[mask, col_resp].dropna().tolist()
-                
-                vagas = amostra_alvo - len(amostras_coletadas[pid])
-                amostras_coletadas[pid].extend(resps[:vagas])
 
-    # 4. Salvar Matrizes Binárias
-    os.makedirs(dir_saida, exist_ok=True)
-    provas_ok = 0
+    # --- GERAÇÃO DAS MATRIZES BINÁRIAS ---
+    dir_matriz = os.path.join("ENEM", ano, "DADOS", "MATRIZ")
+    os.makedirs(dir_matriz, exist_ok=True)
+
     for pid, resps in amostras_coletadas.items():
-        filename = f"{pid}_{amostra_formatada}_data.csv"
-        path_out = os.path.join(dir_saida, filename)
+        if not resps:
+            print(f"⚠️  Prova {pid}: Nenhuma resposta coletada.")
+            continue
 
-        if len(resps) < amostra_alvo:
-            print(f"⚠️ Prova {pid}: Amostra insuficiente ({len(resps)}/{amostra_alvo})")
-            if len(resps) == 0: continue
-            
-        df_gab = df_itens_all[df_itens_all['CO_PROVA'].astype(int).astype(str) == pid].sort_values('CO_POSICAO')
-        gabarito_str = "".join(df_gab['TX_GABARITO'].astype(str).tolist())
-        
-        if not gabarito_str: continue
+        prova_info = itens_data[pid]  # garantido existir pela verificação anterior
+        questions  = prova_info['QUESTIONS']
 
-        matriz = [[1 if a == b else 0 for a, b in zip(r, gabarito_str)] for r in resps]
-        pd.DataFrame(matriz).to_csv(path_out, header=False, index=False)
-        print(f"  ✅ Matriz criada: {filename} ({len(resps)} alunos)")
-        provas_ok += 1
+        # LÓGICA DO GABARITO:
+        # Como filtramos por Inglês, ignoramos as chaves de Espanhol ("01" a "05")
+        # para que o tamanho do gabarito (45) bata com a string TX_RESPOSTAS_LC (45)
+        chaves_validas = [k for k in questions.keys() if k not in ["01", "02", "03", "04", "05"]]
+        chaves_ord     = sorted(chaves_validas, key=lambda x: int(x))
 
-    print(f"\n✨ Processo finalizado. {provas_ok} matrizes salvas em {dir_saida}")
+        gabarito = "".join([questions[k]['answer'] for k in chaves_ord])
+
+        # Compara resposta do aluno com gabarito (Matriz de Acertos)
+        matriz_bin = []
+        for r in resps:
+            if len(r) == len(gabarito):
+                linha = [1 if a == b else 0 for a, b in zip(r, gabarito)]
+                matriz_bin.append(linha)
+
+        if matriz_bin:
+            amostra_str = str(amostra_alvo).zfill(6)
+            nome_arq    = f"{pid}_{amostra_str}_data.csv"
+            pd.DataFrame(matriz_bin).to_csv(
+                os.path.join(dir_matriz, nome_arq), index=False, header=False
+            )
+            print(f"✅ Matriz salva: {nome_arq} ({len(matriz_bin)} alunos)")
+        else:
+            print(f"⚠️  Prova {pid}: Nenhuma resposta com tamanho compatível com o gabarito ({len(gabarito)}).")
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
         print("Uso: python _03_enem2matriz.py <ANO> <AMOSTRA>")
     else:
-        processar_matriz(sys.argv[1], sys.argv[2])
+        processar_matrizes(sys.argv[1], int(sys.argv[2]))

@@ -1,31 +1,11 @@
 '''
-=============================================================================
-...
+=====================================================================
+Copyright (C) 2021 UFABC, developed by Francisco de Assis Zampirolli
+from Federal University of ABC and individual contributors.
+All rights reserved.
 
-─────────────────────────────────────────────────────────────────────────────
-DIA 1  (detectado por "DIA_1" no NOME_PROVA):
-
-  Bloco       Questão         Chave JSON
-  ─────────   ──────────       ──────────
-  Inglês      q1  – q5         "1"…"5"
-  Espanhol    q01 – q05        "01"…"05"   (2ª ocorrência de q1)
-  LC          q06 – q45        "06"…"45"
-  CH          q46 – q90        "46"…"90"
-
-DIA 2:
-
-  Bloco       Questão       NNN       Chave JSON
-  ─────────   ──────────    ───────   ──────────
-  CN     q91  – q135    091–135   "91"…"135"
-  MT     q136 – q180    091–180   "91"…"180"
-
-Analisando ITENS_PROVA_ano.json:
-LC 06 – 45   ==> ex. 1397_06_fig_tri.png
-CH 46 – 90   ==> ex. 1386_51_fig_box.png
-CN 91 – 135  ==> ex. 1421_136_fig_box.png
-MT 136 – 180 ==> ex. 1409_136_fig_tri.png
-
-=============================================================================
+This file is part of "ENEM Interativo".
+=====================================================================
 '''
 
 import json
@@ -337,24 +317,10 @@ def draw_signoits(output_folder, filename_base, mat, mat_raw, ranking):
             a, b, c, m, st, med = mat[i][0], mat[i][1], mat[i][2], mat[i][3], mat[i][4], mat[i][5]
             D = 1.7
 
-            # LÓGICA DE MAPEAMENTO NNN (q_id do JSON)
-            if area == 'LC':
-                # No Dia 1, LC tem 45 itens na matriz (Inglês + Port)
-                # i=0..4 -> "1".."5" | i=5..44 -> "06".."45"
-                q_id = str(i + 1) if i < 5 else str(i + 1).zfill(2)
-            elif area == 'CH':
-                # Matriz 0..44 vira Questões 46..90
-                q_id = str(i + 46)
-            elif area == 'CN':
-                # Matriz 0..44 vira Questões 91..135
-                q_id = str(i + 91)
-            elif area == 'MT':
-                # Matriz 0..44 vira Questões 136..180
-                q_id = str(i + 136)
-            else:
-                q_id = str(i + 1)
+            questao_titulo = f"Questão {i+1} - {area} ({cor})"
 
-            questao_titulo = f"Questão {q_id} - {area} ({cor})"
+            q_id = str(i + 1) # Simplificado para exemplo
+
             # TRI
             #fimg_tri = os.path.join(output_folder, f"{codigo}_{str(i + 1).zfill(3)}_fig_tri_{tam}.png")
             fimg_tri = os.path.join(output_folder, f"{codigo}_{q_id}_fig_tri_{tam}.png")

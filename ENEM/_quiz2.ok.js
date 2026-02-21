@@ -161,16 +161,62 @@ function checkStatistcs(type) {
         
         for (var key in questionsObj) {
             if (questionsObj.hasOwnProperty(key)) {
+            //     var intKey = parseInt(key, 10);
+            //     var uniqueId = "";
+            //     var displayLabel = "";
+
+            //     // --- GERAÇÃO DA CHAVE CORRETA PARA BUSCAR NO userAnswers ---
+            //     // Aplica o offset necessário para alinhar JSON (1-45) com Caderno (46-90)
+                
+            //     if (area === "LC") {
+            //         if (intKey <= 5) {
+            //             // Verifica se é Espanhol ("01") ou Inglês ("1") no JSON original
+            //             if (key.length === 2 && key.charAt(0) === '0') {
+            //                 uniqueId = "LC_ESP_" + intKey;
+            //                 displayLabel = "0" + intKey + " (Esp)";
+            //                 listEspanhol.push(createItem(uniqueId, displayLabel, area, questionsObj[key], intKey));
+            //             } else {
+            //                 uniqueId = "LC_ING_" + intKey;
+            //                 displayLabel = intKey + " (Ing)";
+            //                 listIngles.push(createItem(uniqueId, displayLabel, area, questionsObj[key], intKey));
+            //             }
+            //         } else {
+            //             uniqueId = "LC_" + intKey;
+            //             displayLabel = (intKey < 10 ? "0" + intKey : intKey.toString());
+            //             listLC.push(createItem(uniqueId, displayLabel, area, questionsObj[key], intKey));
+            //         }
+            //     } 
+            //     else if (area === "CH") {
+            //         // CH: JSON 1 vira 46
+            //         var realNum = intKey + 45;
+            //         uniqueId = "CH_" + realNum; 
+            //         displayLabel = realNum.toString();
+            //         listCH.push(createItem(uniqueId, displayLabel, area, questionsObj[key], intKey));
+            //     }
+            //     else if (area === "CN") {
+            //         // CN: JSON 1 vira 91
+            //         var realNum = intKey + 90;
+            //         uniqueId = "CN_" + realNum;
+            //         displayLabel = realNum.toString();
+            //         listCN.push(createItem(uniqueId, displayLabel, area, questionsObj[key], intKey));
+            //     }
+            //     else if (area === "MT") {
+            //         // MT: JSON 1 vira 136
+            //         var realNum = intKey + 135;
+            //         uniqueId = "MT_" + realNum;
+            //         displayLabel = realNum.toString();
+            //         listMT.push(createItem(uniqueId, displayLabel, area, questionsObj[key], intKey));
+            //     }
+            // 
+            // --- Trecho Corrigido em _quiz2.ok.js ---
+
+                // No loop de questionsObj:
                 var intKey = parseInt(key, 10);
                 var uniqueId = "";
                 var displayLabel = "";
 
-                // --- GERAÇÃO DA CHAVE CORRETA PARA BUSCAR NO userAnswers ---
-                // Aplica o offset necessário para alinhar JSON (1-45) com Caderno (46-90)
-                
                 if (area === "LC") {
                     if (intKey <= 5) {
-                        // Verifica se é Espanhol ("01") ou Inglês ("1") no JSON original
                         if (key.length === 2 && key.charAt(0) === '0') {
                             uniqueId = "LC_ESP_" + intKey;
                             displayLabel = "0" + intKey + " (Esp)";
@@ -186,26 +232,15 @@ function checkStatistcs(type) {
                         listLC.push(createItem(uniqueId, displayLabel, area, questionsObj[key], intKey));
                     }
                 } 
-                else if (area === "CH") {
-                    // CH: JSON 1 vira 46
-                    var realNum = intKey + 45;
-                    uniqueId = "CH_" + realNum; 
-                    displayLabel = realNum.toString();
-                    listCH.push(createItem(uniqueId, displayLabel, area, questionsObj[key], intKey));
-                }
-                else if (area === "CN") {
-                    // CN: JSON 1 vira 91
-                    var realNum = intKey + 90;
-                    uniqueId = "CN_" + realNum;
-                    displayLabel = realNum.toString();
-                    listCN.push(createItem(uniqueId, displayLabel, area, questionsObj[key], intKey));
-                }
-                else if (area === "MT") {
-                    // MT: JSON 1 vira 136
-                    var realNum = intKey + 135;
-                    uniqueId = "MT_" + realNum;
-                    displayLabel = realNum.toString();
-                    listMT.push(createItem(uniqueId, displayLabel, area, questionsObj[key], intKey));
+                else {
+                    // Para CH (46-90), CN (91-135) e MT (136-180)
+                    // As chaves no JSON já são os números reais do caderno
+                    uniqueId = area + "_" + intKey; 
+                    displayLabel = intKey.toString();
+                    
+                    if (area === "CH") listCH.push(createItem(uniqueId, displayLabel, area, questionsObj[key], intKey));
+                    else if (area === "CN") listCN.push(createItem(uniqueId, displayLabel, area, questionsObj[key], intKey));
+                    else if (area === "MT") listMT.push(createItem(uniqueId, displayLabel, area, questionsObj[key], intKey));
                 }
             }
         }
@@ -260,7 +295,7 @@ function checkStatistcs(type) {
     html += '<h1>ENEM Interativo</h1>';
     html += '<p><strong>Prova:</strong> ' + currentYear + ' | <strong>Cor:</strong> ' + currentColor + '</p><hr>';
 
-    html += '<table class="tg"><thead><tr><th>N.</th><th>Disciplina</th><th>Correta <small>(Clique)</small></th><th>Marcada</th><th>Hab.</th><th>TRI</th><th>Est.</th></tr></thead><tbody>';
+    html += '<table class="tg"><thead><tr><th>N.</th><th>Disciplina</th><th>Correta <small>(Clique)</small></th><th>Marcada</th><th>Hab.</th><th>TRI</th><th>Est.</th><th>Questão</th><th>Ajuda</th></tr></thead><tbody>';
 
     for (var i = 0; i < finalOrder.length; i++) {
         var item = finalOrder[i];
@@ -281,12 +316,36 @@ function checkStatistcs(type) {
         
         var linkTRI = "-";
         var linkBOX = "-";
-        if (item.data.images && item.data.images.length >= 2) {
-            var triImg = item.data.images[0];
-            var boxImg = item.data.images[1];
+        var linkQuestion = "-";
+        var linkHelp = "-";
+        
+        // Identifica se a questão é de Espanhol pela chave composta
+        var isEspanhol = (item.compositeKey.indexOf("LC_ESP_") === 0);
 
-            linkTRI = '<a href="../FIGS/' + triImg + '" target="_blank">Ver</a>';
-            linkBOX = '<a href="../FIGS/' + boxImg + '" target="_blank">Ver</a>';
+        if (item.data.images && item.data.images.length >= 4) {
+            var triImg = item.data.images[0] || null;
+            var boxImg = item.data.images[1] || null;
+            var dataImg = item.data.images[2] || null;
+            var helpFile = item.data.images[3] || null;
+
+            // Se NÃO for espanhol e o arquivo existir, mostra o link "Ver"
+            if (!isEspanhol) {
+                if (triImg) linkTRI = '<a href="../FIGS/' + triImg + '" target="_blank">Ver</a>';
+                if (boxImg) linkBOX = '<a href="../FIGS/' + boxImg + '" target="_blank">Ver</a>';
+            } else {
+                // Para espanhol, TRI e BOX ficam explicitamente como "-"
+                linkTRI = "-";
+                linkBOX = "-";
+            }
+
+            // A imagem da questão (img_data) sempre aparece para todos os idiomas
+            if (dataImg) {
+                linkQuestion = '<a href="../FIGS/' + dataImg + '" target="_blank">Ver</a>';
+            }
+            // O arquivo de ajuda (help.html) sempre aparece para todos os idiomas
+            if (helpFile) {
+                linkHelp = '<a href="../FIGS/' + helpFile + '" target="_blank">Ver</a>';
+            }
         }
 
         html += '<tr class="' + rowClass + '">';
@@ -297,6 +356,8 @@ function checkStatistcs(type) {
         html += '<td>' + (item.data.ability || "-") + '</td>';
         html += '<td>' + linkTRI + '</td>';
         html += '<td>' + linkBOX + '</td>';
+        html += '<td>' + linkQuestion + '</td>';
+        html += '<td>' + linkHelp + '</td>';
         html += '</tr>';
     }
 

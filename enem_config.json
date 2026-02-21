@@ -37,5 +37,9 @@
     "output_provas": "ENEM/{ano}/PROVAS_E_GABARITOS",
     "output_imagens": "ENEM/{ano}/PROVAS_E_GABARITOS/imagens"
   },
+<<<<<<< HEAD
+  "ultima_atualizacao": "2026-01-31T09:04:52.209370"
+=======
   "ultima_atualizacao": "2026-01-31T14:58:57.879690"
+>>>>>>> 28add8bc7f8a1ff0cf58a9d91705dfc6733aca03
 }
