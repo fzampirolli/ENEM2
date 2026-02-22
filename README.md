@@ -726,7 +726,137 @@ python3 _10_nova_funcionalidade.py $ANO
 - Documente mudanças no README
 - Use logging colorido para feedback ao usuário
 
+Perfeito! Aqui está a versão com seu repositório explicitamente incluído em todos os exemplos:
+
 ---
+
+## 📁 **Sincronizar projeto ENEM2 com GitHub**
+
+
+---
+
+### 📥 **Baixar atualizações do GitHub para o local**
+
+```bash
+# Baixar as últimas alterações do repositório ENEM2
+git pull https://github.com/fzampirolli/ENEM2.git main
+
+# Ou, se o remote já estiver configurado (mais comum):
+git pull origin main
+```
+
+### 📤 **Primeiro envio do projeto local para o GitHub**
+
+```bash
+# Inicializar o Git na pasta do projeto ENEM2
+git init
+
+# Adicionar todos os arquivos do projeto
+git add .
+
+# Criar o primeiro commit
+git commit -m "Upload completo de arquivos e scripts corrigidos"
+
+# Conectar ao repositório remoto do ENEM2
+git remote add origin https://github.com/fzampirolli/ENEM2.git
+
+# Enviar para o GitHub (forçando a criação da branch main)
+git push -u origin main --force
+```
+
+✅ **Situação ideal para usar --force:** Primeiro envio para um repositório recém-criado e vazio no GitHub.
+
+
+---
+
+### 🔄 **Atualizar o GitHub com novas alterações locais**
+
+```bash
+# Verificar o que foi modificado
+git status
+
+# Adicionar arquivos específicos ou todos (.)
+git add .
+
+# Criar um commit descrevendo as alterações
+git commit -m "Descrição clara das alterações feitas no ENEM2"
+
+# Enviar para o GitHub
+git push origin main
+```
+
+---
+
+### 🔀 **Sincronização completa (recomendado)**
+
+```bash
+# PASSO 1: Garantir que está com a versão mais recente do GitHub
+git pull origin main
+
+# PASSO 2: Fazer suas alterações locais no ENEM2
+# ... (editar arquivos, scripts, etc.)
+
+# PASSO 3: Preparar e descrever as alterações
+git add .
+git commit -m "Descrição detalhada das alterações no ENEM2"
+
+# PASSO 4: Enviar para o GitHub
+git push origin main
+```
+
+---
+
+## 🚨 **Cuidado com --force em situações futuras!**
+
+```bash
+# ❌ EVITE fazer isso depois que o repositório já tiver histórico:
+git push -u origin main --force
+
+# ✅ Prefira usar (mais seguro):
+git push origin main
+
+# ✅ Se realmente precisar forçar, use a versão mais segura:
+git push --force-with-lease origin main
+```
+
+**Por que evitar --force depois do primeiro envio?**
+- Pode apagar commits de outras pessoas
+- Pode causar conflitos e perda de trabalho
+- Sobrescreve o histórico sem aviso
+
+---
+
+## 📋 **Comandos úteis para o projeto ENEM2**
+
+```bash
+# Ver configuração do repositório remoto
+git remote -v
+# Saída esperada:
+# origin  https://github.com/fzampirolli/ENEM2.git (fetch)
+# origin  https://github.com/fzampirolli/ENEM2.git (push)
+
+# Ver histórico de commits do ENEM2
+git log --oneline
+
+# Ver diferenças entre local e remoto
+git fetch origin
+git diff origin/main
+
+# Se algo der errado, verifique o status
+git status
+```
+
+---
+
+## ✅ **Checklist para seu fluxo com ENEM2**
+
+- [ ] **Primeiro uso:** `git init` + `git add .` + `git commit` + `git remote add origin https://github.com/fzampirolli/ENEM2.git` + `git push -u origin main --force`
+- [ ] **Uso diário:** `git pull origin main` (começar) → fazer alterações → `git add .` → `git commit -m "mensagem"` → `git push origin main`
+- [ ] **NUNCA** usar `--force` novamente a menos que seja absolutamente necessário e você saiba as consequências
+
+---
+
+**Lembre-se:** O `--force` só foi necessário no primeiro envio porque você provavelmente criou o repositório no GitHub com algum arquivo (README, .gitignore) e precisou sobrescrever. Nas próximas vezes, use apenas `git push origin main`.
 
 ## 📄 Licença
 
