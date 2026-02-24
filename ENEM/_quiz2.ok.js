@@ -133,6 +133,7 @@ function checkAnswer(qId) {
     } else {
         alert("Selecione uma alternativa.");
     }
+    registrarLog("verificou_resposta", { questao_id: qId });
 }
 
 // --- Relatório ---

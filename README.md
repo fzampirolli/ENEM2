@@ -858,6 +858,40 @@ git status
 
 **Lembre-se:** O `--force` só foi necessário no primeiro envio porque você provavelmente criou o repositório no GitHub com algum arquivo (README, .gitignore) e precisou sobrescrever. Nas próximas vezes, use apenas `git push origin main`.
 
+
+## 🌐 **Servidor HTTP local com Python**
+
+### 📥 **Subir servidor (na pasta atual)**
+```bash
+python -m http.server 8000
+```
+Acesse: `http://localhost:8000`
+
+### 📁 **Servir pasta específica**
+```bash
+python -m http.server 8000 --directory /caminho/para/ENEM2
+```
+
+### 🌍 **Acessível na rede local**
+```bash
+python -m http.server 8000 --bind 0.0.0.0
+```
+Outros computadores acessam: `http://SEU_IP:8000`
+
+### 🛑 **Parar servidor**
+`Ctrl + C` no terminal
+
+### 🔄 **Portas alternativas**
+```bash
+python -m http.server 8080  # porta 8080
+python -m http.server 3000  # porta 3000
+```
+
+### ⚠️ **Problemas comuns**
+- **"python não encontrado"**: tente `python3`
+- **"porta em uso"**: mude a porta ou mate o processo
+- **Apenas para testes locais** (não usar em produção)
+
 ## 📄 Licença
 
 **GNU Affero General Public License (AGPL-3.0)**

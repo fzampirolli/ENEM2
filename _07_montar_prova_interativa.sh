@@ -38,9 +38,75 @@ cat > "$HTML_FILE" <<EOF
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ENEM $ANO - $ID_PROVA</title>
+
+<!-- REMOVA ESTAS LINHAS DO SDK COMPAT --
+<-- <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script> --
+<-- <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script> --
+<-- <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script> --
+
+<script type="module">
+  // Importe as funções necessárias dos SDKs que você precisa
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-analytics.js";
+  // Importe os módulos ESPECÍFICOS para a autenticação do Firebase (abordagem modular)
+  import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithRedirect } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+  import { getFirestore } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js"; // Se for usar Firestore
+
+  // Sua configuração do Firebase para o aplicativo web
+  const firebaseConfig = {
+    apiKey: "AIzaSyBT3Zw38bXgBIAmO8pwX8bnbmD1RffTRiA",
+    authDomain: "enem2-interativo-com-ia.firebaseapp.com",
+    projectId: "enem2-interativo-com-ia",
+    storageBucket: "enem2-interativo-com-ia.appspot.com", // Geralmente termina em .appspot.com
+    messagingSenderId: "98345392047",
+    appId: "1:98345392047:web:fb775012cd7ce4efb7815a",
+    measurementId: "G-0SW84K2HHM"
+  };
+  
+  // Inicialize o Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const auth = getAuth(app); // Obtenha a instância de autenticação
+  const db = getFirestore(app); // Obtenha a instância do Firestore (se for usar)
+
+
+  // restringe acesso por domínio   
+  onAuthStateChanged(auth, (user) => { // Use 'onAuthStateChanged' e 'auth' da abordagem modular
+    if (user) {
+      // Verifica se o e-mail termina com ufabc.edu.br ou outro domínio específico
+      if (!user.email.endsWith("@ufabc.edu.br") && !user.email.endsWith("@aluno.ufabc.edu.br") && !user.email.endsWith("@gmail.com")) {
+        alert("Acesso restrito a alunos autorizados.");
+        // Use a função modular para signOut
+        auth.signOut();
+      }
+    } else {
+      const provider = new GoogleAuthProvider(); // Use 'GoogleAuthProvider' da abordagem modular
+      // Use a função modular para signInWithRedirect
+      signInWithRedirect(auth, provider);
+    }
+  });
+
+
+  // restringe acesso por domínio   
+  //firebase.auth().onAuthStateChanged((user) => {
+  //if (user) {
+    // Verifica se o e-mail termina com ufabc.edu.br ou outro domínio específico
+  //  if (!user.email.endsWith("@ufabc.edu.br") && !user.email.endsWith("@aluno.ufabc.edu.br") && !user.email.endsWith("@gmail.com")) {
+  //    alert("Acesso restrito a alunos autorizados.");
+  //    firebase.auth().signOut();
+   // }
+  //} else {
+  //  const provider = new firebase.auth.GoogleAuthProvider();
+  //  firebase.auth().signInWithRedirect(provider);
+  // }
+ //});
+</script>
+-->
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <link rel="stylesheet" href="../../_cronometro.css">
 <script src="../../_quiz2.ok.js?v=$(date +%s)"></script>
+
 <style>
     body { background-color: #808080; margin: 0; padding: 0; font-family: sans-serif; }
     #page-container { background-color: white; margin: 0 auto; padding: 0; max-width: 1000px; box-shadow: 0px 0px 15px rgba(0,0,0,0.5); min-height: 100vh; padding-bottom: 50px; }

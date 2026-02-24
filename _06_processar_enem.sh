@@ -16,6 +16,26 @@ if [ -z "$NOME_PROVA_TEXTO" ]; then
     exit 1
 fi
 
+# ==============================================================================
+# VERIFICAÇÃO PRINCIPAL: pasta de imagens já existe?
+# ==============================================================================
+
+IMAGENS_DIR="ENEM/$ANO/PROVAS_E_GABARITOS/imagens/$NOME_PROVA_TEXTO"
+
+if [ -d "$IMAGENS_DIR" ]; then
+    echo "✅ PASTA JÁ EXISTE: $IMAGENS_DIR"
+    echo "   Imagens encontradas: $(find "$IMAGENS_DIR" -name "*.png" 2>/dev/null | wc -l | tr -d ' ') arquivos PNG"
+    
+    exit 0
+else
+    echo "🆕 Pasta não existe. Criando: $IMAGENS_DIR"
+    mkdir -p "$IMAGENS_DIR"
+fi
+
+# ==============================================================================
+# CONTINUA COM O PROCESSAMENTO NORMAL
+# ==============================================================================
+
 # 1. Identifica TODOS os CO_PROVA numéricos vinculados a este PDF via ranking [cite: 13, 16]
 CO_PROVAS=$(python3 -c "import json, sys; \
     r = json.load(open('ENEM/$ANO/DADOS/ranking_provas_$ANO.json')); \
@@ -23,6 +43,7 @@ CO_PROVAS=$(python3 -c "import json, sys; \
     print(' '.join(ids))")
 
 echo "   [FATIAMENTO] PDF: $NOME_PROVA_TEXTO | IDs Detectados: $CO_PROVAS"
+
 
 # 2. Executa fatiamento comum do PDF (Uma única vez)
 TEMP_FATIAS="_temp_${ANO}_$(date +%s)"
