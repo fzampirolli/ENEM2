@@ -1,7 +1,7 @@
 import os
 import glob
 import sys
-from _09_createMainIndex import get_common_css, get_anos_links, BASE_DIR
+from _09_createMainIndex import get_common_css, get_anos_links, BASE_DIR, FIREBASE_SCRIPT
 
 def criar_index_ano(ano, anos_disponiveis):
     print(f"--> Processando índice do ano: {ano}")
@@ -21,7 +21,8 @@ def criar_index_ano(ano, anos_disponiveis):
     menu_html = get_anos_links(anos_disponiveis, prefix="../")
     menu_html = f'<a href="../index.html" style="background-color:#eee;">🏠 Início</a>' + menu_html
 
-    html = f"""<!doctype html><html lang="pt-br"><head><meta charset="utf-8"><title>ENEM {ano} - ENEM2</title>{get_common_css()}</head>
+    # ✅ FIREBASE_SCRIPT incluído aqui: controle de acesso apenas nas páginas de cada ano
+    html = f"""<!doctype html><html lang="pt-br"><head><meta charset="utf-8"><title>ENEM {ano} - ENEM2</title>{get_common_css()}{FIREBASE_SCRIPT}</head>
     <body><div id="header"><h1>ENEM Interativo {ano}</h1></div>
     <div class="main-container"><div id="nav">{menu_html}</div><div id="section">
     <h2>Cadernos Disponíveis</h2><p>Selecione uma prova para iniciar o simulado:</p>{lista_html}</div></div>

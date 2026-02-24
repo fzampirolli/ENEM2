@@ -3,6 +3,55 @@ import glob
 
 BASE_DIR = "ENEM"
 
+# ✅ Script Firebase modular - restrição de acesso por domínio
+# Usado APENAS em _08_createIndex.py (páginas de cada ano de prova)
+# NÃO aplicado em index.html nem statistics.html (páginas públicas)
+FIREBASE_SCRIPT = """
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-analytics.js";
+  import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut }
+    from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBT3Zw38bXgBIAmO8pwX8bnbmD1RffTRiA",
+    authDomain: "enem2-interativo-com-ia.firebaseapp.com",
+    projectId: "enem2-interativo-com-ia",
+    storageBucket: "enem2-interativo-com-ia.appspot.com",
+    messagingSenderId: "98345392047",
+    appId: "1:98345392047:web:fb775012cd7ce4efb7815a",
+    measurementId: "G-0SW84K2HHM"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const auth = getAuth(app);
+
+  const dominiosPermitidos = ["@ufabc.edu.br", "@aluno.ufabc.edu.br", "@gmail.com"];
+
+  // signInWithPopup funciona em localhost e em produção sem loop infinito
+  // signInWithRedirect causava loop: página recarrega → user null → redirect → loop...
+  let loginEmAndamento = false;
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      if (!dominiosPermitidos.some(d => user.email.endsWith(d))) {
+        alert("Acesso restrito a alunos autorizados.");
+        signOut(auth);
+      }
+      // usuário autorizado: página carrega normalmente
+    } else {
+      if (!loginEmAndamento) {
+        loginEmAndamento = true;
+        signInWithPopup(auth, new GoogleAuthProvider())
+          .finally(() => { loginEmAndamento = false; });
+      }
+    }
+  });
+</script>
+"""
+
+
 def get_common_css():
     """Retorna o CSS unificado para todas as páginas do portal ENEM2."""
     return """
@@ -128,15 +177,15 @@ def criar_index(anos, menu_html):
         cards_html += f"""<div class="year-card"><h3>{ano}</h3><p><strong>{qtd}</strong> provas</p><a href="./{ano}/index.html" class="btn-access">Explorar</a></div>"""
     cards_html += '</div>'
 
+    # ✅ SEM FIREBASE_SCRIPT - página principal é pública
     html = f"""<!doctype html><html lang="pt-br"><head><meta charset="utf-8"><title>ENEM Interativo - ENEM2</title>{get_common_css()}</head>
     <body><div id="header"><h1>ENEM Interativo <span style="font-size: 0.6em; opacity: 0.8;">v2.0</span></h1></div>
     <div class="main-container"><div id="nav">{menu_html}</div><div id="section">
     <div class="hero-section"><h2>Bem-vindo ao Projeto ENEM2</h2><p>Evolução do portal <a href="http://mctest.ufabc.edu.br:8000/ENEM" target="_blank">MCTest/ENEM</a>.</p></div>
     <h3>Selecione o ano:</h3>{cards_html}</div></div>
     <div id="footer">
-    <p>Licença AGPLv3 | Projeto ENEM2 | Desenvolvido na <a href=\"http://www.ufabc.edu.br\">UFABC</a></p>
-    </p></div>
-    </body></html>"""
+    <p>Licença AGPLv3 | Projeto ENEM2 | Desenvolvido na <a href="http://www.ufabc.edu.br">UFABC</a></p>
+    </div></body></html>"""
     
     with open(os.path.join(BASE_DIR, "index.html"), "w", encoding="utf-8") as f:
         f.write(html)
@@ -158,6 +207,7 @@ def criar_index1(anos, menu_html):
 
 def criar_statistics(anos, menu_html):
     """Cria a página statistics.html com TODO o conteúdo explicativo original."""
+    # ✅ SEM FIREBASE_SCRIPT - página de metodologia é pública
     html = f"""<!doctype html>
 <html lang="pt-br">
 <head>
@@ -189,8 +239,6 @@ def criar_statistics(anos, menu_html):
 
       <h3>1. Curva Característica do Item (CCI)</h3>
       <p>Estes gráficos mostram a CCI da Teoria de Resposta ao Item (TRI), calculada via modelo <strong>3PL</strong> (Três Parâmetros Logísticos):</p>
-      
-      
 
       <ul style=\"line-height: 1.8;\">
         <li><strong>Parâmetro a (Discriminação):</strong> Capacidade da questão de diferenciar alunos com maior e menor proficiência.</li>

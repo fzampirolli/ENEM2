@@ -323,27 +323,29 @@ function checkStatistcs(type) {
         // Identifica se a questão é de Espanhol pela chave composta
         var isEspanhol = (item.compositeKey.indexOf("LC_ESP_") === 0);
 
+        // Inicializa as variáveis como "-" para garantir que a tabela não fique vazia
+        var linkTRI = "-", linkBOX = "-", linkQuestion = "-", linkHelp = "-";
+
         if (item.data.images && item.data.images.length >= 4) {
+            // Atribui os valores ou null se não existirem
             var triImg = item.data.images[0] || null;
             var boxImg = item.data.images[1] || null;
             var dataImg = item.data.images[2] || null;
             var helpFile = item.data.images[3] || null;
 
-            // Se NÃO for espanhol e o arquivo existir, mostra o link "Ver"
+            // Lógica para TRI e BOX (Respeitando a regra do idioma)
             if (!isEspanhol) {
+                // Só cria o HTML se a variável tiver conteúdo (não for null ou string vazia)
                 if (triImg) linkTRI = '<a href="../FIGS/' + triImg + '" target="_blank">Ver</a>';
                 if (boxImg) linkBOX = '<a href="../FIGS/' + boxImg + '" target="_blank">Ver</a>';
-            } else {
-                // Para espanhol, TRI e BOX ficam explicitamente como "-"
-                linkTRI = "-";
-                linkBOX = "-";
             }
 
-            // A imagem da questão (img_data) sempre aparece para todos os idiomas
+            // A imagem da questão (dataImg)
             if (dataImg) {
                 linkQuestion = '<a href="../FIGS/' + dataImg + '" target="_blank">Ver</a>';
             }
-            // O arquivo de ajuda (help.html) sempre aparece para todos os idiomas
+
+            // O arquivo de ajuda (helpFile)
             if (helpFile) {
                 linkHelp = '<a href="../FIGS/' + helpFile + '" target="_blank">Ver</a>';
             }
